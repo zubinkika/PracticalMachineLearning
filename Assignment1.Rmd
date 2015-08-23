@@ -45,6 +45,7 @@ For building the model below  3 methods were used:
 2. Decision trees
 3. Boosting
 The accurancy of each of the method was compared using confusion matrix.
+We would expect to select model whose accuracy is above **80%**.
 
 ### Random Forest
 We used **rf** Random forest method with cross validation to train the model. Below is the R code for the same.
@@ -53,6 +54,7 @@ rf_model<-train(classe~.,data=newtrainingData,method="rf",  trControl=trainContr
 confusionMatrix(newtestData$classe, predict(rf_model,newtestData))
 ```
 The output of the confusion matrix show that the model has **500** trees and it is **99.06%** accurate and each class has a error **0.1%**. 
+It has kappa value of **0.3777**.
 This looks to be very good model and can be used for final prediction.
 
 ### Decision trees
@@ -61,7 +63,7 @@ We used **rpart** method for decision tree to train the model. Below is the R co
 rf_model<-train(classe~.,data=newtrainingData,method="rpart")
 confusionMatrix(newtestData$classe, predict(rf_model,newtestData))
 ```
-The output of the confusion matrix show that the model is **52.28%** accurate.
+The output of the confusion matrix show that the model is **52.28%** accurate and kappa is **0.3777**.
 This model does not seem to be very accurate and we will not use it for final prediction.
 
 ###Boosting 
@@ -70,7 +72,7 @@ We used **gbm** method for gradient boosting apporach to train the model. Below 
 rf_model<-train(classe~.,data=newtrainingData,method="gbm",verbose=F)
 confusionMatrix(newtestData$classe, predict(rf_model,newtestData))
 ```
-The output of the confusion matrix show that the model is **98.11%** accurate.
+The output of the confusion matrix show that the model is **98.11%** accurate and value of kappa is **0.9761**.
 This looks to be very good model and can be used for final prediction.
 
 ## Conclusion
@@ -79,7 +81,8 @@ Below table summarizes the Accurancy of different model used for the training.
 data.frame(method=c("Random Forest", "Decision Tree", "Boosting"), Accurancy =c("99.06%","52.28%","98.11%*"))
 ```
 
-It can be be concluded that we can use Random forest for the final prediction as it has the highest accuracy.
+It can be be concluded that both boosting and Random forest have high accurancy percentages. 
+However since Random forest has better accurancy then boosting, we can use Random forest for the final prediction as it has the highest accuracy.
 
 
 

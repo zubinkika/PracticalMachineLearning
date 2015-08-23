@@ -99,27 +99,27 @@ newtestData &lt;- training[-InTrain,]</code></pre>
 </div>
 <div id="model-buiding-and-validation" class="section level2">
 <h2>Model Buiding and Validation</h2>
-<p>For building the model below 3 methods were used: 1.Random forest 2. Decision trees 3. Boosting The accurancy of each of the method was compared using confusion matrix.</p>
+<p>For building the model below 3 methods were used: 1.Random forest 2. Decision trees 3. Boosting The accurancy of each of the method was compared using confusion matrix. We would expect to select model whose accuracy is above <strong>80%</strong>.</p>
 <div id="random-forest" class="section level3">
 <h3>Random Forest</h3>
 <p>We used <strong>rf</strong> Random forest method with cross validation to train the model. Below is the R code for the same.</p>
 <pre class="r"><code>rf_model&lt;-train(classe~.,data=newtrainingData,method=&quot;rf&quot;,  trControl=trainControl(method=&quot;cv&quot;,number=5),  prox=TRUE,allowParallel=TRUE)
 confusionMatrix(newtestData$classe, predict(rf_model,newtestData))</code></pre>
-<p>The output of the confusion matrix show that the model has <strong>500</strong> trees and it is <strong>99.06%</strong> accurate and each class has a error <strong>0.1%</strong>. This looks to be very good model and can be used for final prediction.</p>
+<p>The output of the confusion matrix show that the model has <strong>500</strong> trees and it is <strong>99.06%</strong> accurate and each class has a error <strong>0.1%</strong>. It has kappa value of <strong>0.3777</strong>. This looks to be very good model and can be used for final prediction.</p>
 </div>
 <div id="decision-trees" class="section level3">
 <h3>Decision trees</h3>
 <p>We used <strong>rpart</strong> method for decision tree to train the model. Below is the R code for the same.</p>
 <pre class="r"><code>rf_model&lt;-train(classe~.,data=newtrainingData,method=&quot;rpart&quot;)
 confusionMatrix(newtestData$classe, predict(rf_model,newtestData))</code></pre>
-<p>The output of the confusion matrix show that the model is <strong>52.28%</strong> accurate. This model does not seem to be very accurate and we will not use it for final prediction.</p>
+<p>The output of the confusion matrix show that the model is <strong>52.28%</strong> accurate and kappa is <strong>0.3777</strong>. This model does not seem to be very accurate and we will not use it for final prediction.</p>
 </div>
 <div id="boosting" class="section level3">
 <h3>Boosting</h3>
 <p>We used <strong>gbm</strong> method for gradient boosting apporach to train the model. Below is the R code for the same.</p>
 <pre class="r"><code>rf_model&lt;-train(classe~.,data=newtrainingData,method=&quot;gbm&quot;,verbose=F)
 confusionMatrix(newtestData$classe, predict(rf_model,newtestData))</code></pre>
-<p>The output of the confusion matrix show that the model is <strong>98.11%</strong> accurate. This looks to be very good model and can be used for final prediction.</p>
+<p>The output of the confusion matrix show that the model is <strong>98.11%</strong> accurate and value of kappa is <strong>0.9761</strong>. This looks to be very good model and can be used for final prediction.</p>
 </div>
 </div>
 <div id="conclusion" class="section level2">
@@ -129,7 +129,7 @@ confusionMatrix(newtestData$classe, predict(rf_model,newtestData))</code></pre>
 ## 1 Random Forest    99.06%
 ## 2 Decision Tree    52.28%
 ## 3      Boosting   98.11%*</code></pre>
-<p>It can be be concluded that we can use Random forest for the final prediction as it has the highest accuracy.</p>
+<p>It can be be concluded that both boosting and Random forest have high accurancy percentages. However since Random forest has better accurancy then boosting, we can use Random forest for the final prediction as it has the highest accuracy.</p>
 </div>
 </div>
 
