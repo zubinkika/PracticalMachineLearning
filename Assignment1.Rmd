@@ -1,0 +1,88 @@
+# Practical Machine Learning Assignment
+#### Author : Zubin Kika
+#### Date: August 2015
+
+## Objective
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. 
+
+The project will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. 
+The participants were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset). 
+The objective of this project is to look at a data set of and  predict the manner in which they did the exercise. 
+We need to predict the value of the "classe" variable in the training set based on the predictors.
+We will use the carpet package for doing machine learning.
+
+## Data analyses and cleanup
+We load the training and test data sets using the below R code.
+```{r }
+require(caret)
+training <- read.csv("pml-training.csv",na.strings=c("NA",""))
+test <- read.csv("pml-testing.csv",na.strings=c("NA",""))
+```
+The dataset contains **19622** rows and **160** columns.
+```{r}
+dim(training)
+```
+It was observed that colums 1-6 contains index,user names and timestamps. Since they have no significance in predication,we will discard these columns.
+```{r}
+training<-training[,7:160]
+test<-test[,7:160]
+```
+
+We need to indentify columns which have a high number of NA and remove them from the final prediction. Below R code, identifies columns which have less than **3%** of NA and includes them in the final model. Also we split the training data into new training and test dataset.
+We will use this new training dataset for buiding the model and test dataset for validating the model.
+```{r}
+nonNAData <- apply(!is.na(training),2,mean) > .03
+training <- training[,nonNAData]
+InTrain<-createDataPartition(y=training$classe,p=0.3,list=FALSE)
+newtrainingData <- training[InTrain,]
+newtestData <- training[-InTrain,]
+```
+It was observed that after cleanup the columns were reduced **54**.
+
+## Model Buiding and Validation
+For building the model below  3 methods were used:
+1.Random forest
+2. Decision trees
+3. Boosting
+The accurancy of each of the method was compared using confusion matrix.
+
+### Random Forest
+We used **rf** Random forest method with cross validation to train the model. Below is the R code for the same.
+```{r eval=F}
+rf_model<-train(classe~.,data=newtrainingData,method="rf",  trControl=trainControl(method="cv",number=5),  prox=TRUE,allowParallel=TRUE)
+confusionMatrix(newtestData$classe, predict(rf_model,newtestData))
+```
+The output of the confusion matrix show that the model has **500** trees and it is **99.06%** accurate and each class has a error **0.1%**. 
+This looks to be very good model and can be used for final prediction.
+
+### Decision trees
+We used **rpart** method for decision tree to train the model. Below is the R code for the same.
+```{r eval=F}
+rf_model<-train(classe~.,data=newtrainingData,method="rpart")
+confusionMatrix(newtestData$classe, predict(rf_model,newtestData))
+```
+The output of the confusion matrix show that the model is **52.28%** accurate.
+This model does not seem to be very accurate and we will not use it for final prediction.
+
+###Boosting 
+We used **gbm** method for gradient boosting apporach to train the model. Below is the R code for the same.
+```{r eval=F}
+rf_model<-train(classe~.,data=newtrainingData,method="gbm",verbose=F)
+confusionMatrix(newtestData$classe, predict(rf_model,newtestData))
+```
+The output of the confusion matrix show that the model is **98.11%** accurate.
+This looks to be very good model and can be used for final prediction.
+
+## Conclusion
+Below table summarizes the Accurancy of different model used for the training.
+```{r kable ,echo=F}
+data.frame(method=c("Random Forest", "Decision Tree", "Boosting"), Accurancy =c("99.06%","52.28%","98.11%*"))
+```
+
+It can be be concluded that we can use Random forest for the final prediction as it has the highest accuracy.
+
+
+
+
+
+
